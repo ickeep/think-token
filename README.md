@@ -1,6 +1,7 @@
 # think-token
 利用 JWT 和 think.cache 实现用户认证
-用户与 this.session() 相似
+
+用法与 this.session() 相似
 
 ### 配置
 ``` js

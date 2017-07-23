@@ -29,6 +29,7 @@ async function token(name, value, opts = {}) {
 
   if (!secret) {
     console.error('jwt secret 必填 并且需保密好 不能泄露')
+    return null
   }
 
   // 取值
