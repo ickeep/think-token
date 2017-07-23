@@ -22,10 +22,14 @@ async function token(name, value, opts = {}) {
   const config = Object.assign(dfConfig, opts)
   const key = config.key || 'id'
   const tokenName = config.name || 'token'
-  const secret = config.secret || 'token_secret_asdfasdfasf'
+  const secret = config.secret
   const timeout = config.timeout || 7 * 24 * 60 * 60 * 1000
   const isSetCookie = config.setcookie || false
   const cacheKey = `token-${name}-${key}`
+
+  if (!secret) {
+    console.error('jwt secret 必填 并且需保密好 不能泄露')
+  }
 
   // 取值
   if (!value) {
