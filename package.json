@@ -1,0 +1,26 @@
+{
+  "name": "think-token",
+  "description": "thinkjs 3.0 jwt token auth",
+  "version": "0.1.0",
+  "author": {
+    "name": "icKeep",
+    "email": "i@ickeep.com"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "jsonwebtoken": "^7.4.1"
+  },
+  "devDependencies": {},
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ickeep/think-token"
+  },
+  "bugs": {
+    "url": "https://github.com/ickeep/think-token/issues"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md"
+}
