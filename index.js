@@ -40,7 +40,7 @@ async function token(name, value, opts = {}) {
     } else {
       tokenValue = this.header(tokenName) || this.cookie(tokenName)
     }
-    if (!token) {
+    if (!tokenValue) {
       console.error(`${tokenName} 的值不能为空，请在 header or post or cookie 传值`)
       return null
     }
