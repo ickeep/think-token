@@ -156,6 +156,9 @@ module.exports = (app) => {
     },
     controller: {
       token
+    },
+    service: {
+      token
     }
   }
 }

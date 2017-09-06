@@ -314,6 +314,9 @@ module.exports = function (app) {
     },
     controller: {
       token: token
+    },
+    service: {
+      token: token
     }
   };
 };
