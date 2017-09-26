@@ -62,7 +62,6 @@ module.exports = (app) => {
     })
   }
 
-
   async function getValue(name, opts) {
     const config = getConf(opts)
     const tokenValue = getToken.call(this, opts)
@@ -116,6 +115,9 @@ module.exports = (app) => {
       time = decoded.time
     }
     if (!uuid) {
+      if (value === null) {
+        return ''
+      }
       const tokenObj = setToken.call(this, opts)
       uuid = tokenObj.uuid
       tokenValue = tokenObj.sign
@@ -144,7 +146,7 @@ module.exports = (app) => {
       return null
     }
     // 取值
-    if (!value) {
+    if (!(value || value === 0 || value === null || value === '')) {
       return getValue.call(this, name, opts)
     }
     return setValue.call(this, name, value, opts)
@@ -162,3 +164,4 @@ module.exports = (app) => {
     }
   }
 }
+

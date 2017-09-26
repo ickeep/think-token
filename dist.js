@@ -183,13 +183,26 @@ module.exports = function (app) {
               time = decoded.time;
 
             case 14:
-              if (!uuid) {
-                tokenObj = setToken.call(this, opts);
-
-                uuid = tokenObj.uuid;
-                tokenValue = tokenObj.sign;
-                time = tokenObj.time;
+              if (uuid) {
+                _context3.next = 21;
+                break;
               }
+
+              if (!(value === null)) {
+                _context3.next = 17;
+                break;
+              }
+
+              return _context3.abrupt('return', '');
+
+            case 17:
+              tokenObj = setToken.call(this, opts);
+
+              uuid = tokenObj.uuid;
+              tokenValue = tokenObj.sign;
+              time = tokenObj.time;
+
+            case 21:
               tmpCacheKey = cachePrefix + '-' + uuid + '-' + name;
 
               // 需要二次缓存 做校验
@@ -209,7 +222,7 @@ module.exports = function (app) {
 
               return _context3.abrupt('return', { token: tokenValue, uuid: uuid, time: time });
 
-            case 18:
+            case 24:
             case 'end':
               return _context3.stop();
           }
@@ -238,7 +251,7 @@ module.exports = function (app) {
               return _context4.abrupt('return', null);
 
             case 3:
-              if (value) {
+              if (value || value === 0 || value === null || value === '') {
                 _context4.next = 5;
                 break;
               }
