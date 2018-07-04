@@ -152,15 +152,25 @@ module.exports = (app) => {
     return setValue.call(this, name, value, opts)
   }
 
+  async function clearToken(name, id) {
+    const config = getConf(opts)
+    const cachePrefix = config.cachePrefix
+    const cacheKey = `${cachePrefix}-${name}-${id}`
+    return this.cache(cacheKey, null);
+  }
+
   return {
     context: {
-      token
+      token,
+      clearToken
     },
     controller: {
-      token
+      token,
+      clearToken
     },
     service: {
-      token
+      token,
+      clearToken
     }
   }
 }

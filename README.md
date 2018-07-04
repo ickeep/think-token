@@ -26,4 +26,10 @@ const token = await this.token('userInfo', { id: 1, name: '用户', mail: 'ickee
 
 ``` js
 const userInfo = await this.token('userInfo')
-``` 
+```
+
+清除
+用于 管理员 冻结用户
+``` js
+const userInfo = await this.clearToken('userInfo'，1)
+```

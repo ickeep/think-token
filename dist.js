@@ -274,6 +274,31 @@ module.exports = function (app) {
     };
   }();
 
+  var clearToken = function () {
+    var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(name, id) {
+      var config, cachePrefix, cacheKey;
+      return _regenerator2.default.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              config = getConf(opts);
+              cachePrefix = config.cachePrefix;
+              cacheKey = cachePrefix + '-' + name + '-' + id;
+              return _context5.abrupt('return', this.cache(cacheKey, null));
+
+            case 4:
+            case 'end':
+              return _context5.stop();
+          }
+        }
+      }, _callee5, this);
+    }));
+
+    return function clearToken(_x11, _x12) {
+      return _ref5.apply(this, arguments);
+    };
+  }();
+
   function getConf(opts) {
     var dfOpts = {
       name: 'token',
@@ -323,13 +348,16 @@ module.exports = function (app) {
 
   return {
     context: {
-      token: token
+      token: token,
+      clearToken: clearToken
     },
     controller: {
-      token: token
+      token: token,
+      clearToken: clearToken
     },
     service: {
-      token: token
+      token: token,
+      clearToken: clearToken
     }
   };
 };
