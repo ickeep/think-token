@@ -275,7 +275,7 @@ module.exports = function (app) {
   }();
 
   var clearToken = function () {
-    var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(name, id) {
+    var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(name, id, opts) {
       var config, cachePrefix, cacheKey;
       return _regenerator2.default.wrap(function _callee5$(_context5) {
         while (1) {
@@ -294,7 +294,7 @@ module.exports = function (app) {
       }, _callee5, this);
     }));
 
-    return function clearToken(_x11, _x12) {
+    return function clearToken(_x11, _x12, _x13) {
       return _ref5.apply(this, arguments);
     };
   }();
