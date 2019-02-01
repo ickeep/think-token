@@ -1,7 +1,7 @@
 {
   "name": "think-token",
   "description": "thinkjs 3.0 jwt token auth",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": {
     "name": "icKeep",
     "email": "i@ickeep.com"
