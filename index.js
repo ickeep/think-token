@@ -159,18 +159,36 @@ module.exports = (app) => {
     return this.cache(cacheKey, null);
   }
 
+  async function manageToken(name, id, newVal, opts) {
+    const config = getConf(opts)
+    const cachePrefix = config.cachePrefix
+    const cacheKey = `${cachePrefix}-${name}-${id}`
+    if (typeof newVal === "object") {
+      const oldVal = await this.cache(cacheKey)
+      if (typeof oldVal === 'object') {
+        return this.cache(cacheKey, Object.assign(oldVal, newVal))
+      }
+      return this.cache(cacheKey, newVal)
+    }
+    return this.cache(cacheKey, newVal);
+  }
+
+
   return {
     context: {
       token,
-      clearToken
+      clearToken,
+      manageToken
     },
     controller: {
       token,
-      clearToken
+      clearToken,
+      manageToken
     },
     service: {
       token,
-      clearToken
+      clearToken,
+      manageToken
     }
   }
 }

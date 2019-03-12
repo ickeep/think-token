@@ -37,7 +37,9 @@ declare namespace ThinkToken {
      */
     token(name: null): IR;
 
-    clearToken(name: IName, id: string, opts?: IOpt): void
+    clearToken(name: IName, id: string, opts?: IOpt): void;
+
+    manageToken(name: IName, id: string, newVal: any, opts?: IOpt): void
   }
 }
 

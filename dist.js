@@ -1,5 +1,9 @@
 'use strict';
 
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
 var _regenerator = require('babel-runtime/regenerator');
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
@@ -299,6 +303,54 @@ module.exports = function (app) {
     };
   }();
 
+  var manageToken = function () {
+    var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(name, id, newVal, opts) {
+      var config, cachePrefix, cacheKey, oldVal;
+      return _regenerator2.default.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              config = getConf(opts);
+              cachePrefix = config.cachePrefix;
+              cacheKey = cachePrefix + '-' + name + '-' + id;
+
+              if (!((typeof newVal === 'undefined' ? 'undefined' : (0, _typeof3.default)(newVal)) === "object")) {
+                _context6.next = 10;
+                break;
+              }
+
+              _context6.next = 6;
+              return this.cache(cacheKey);
+
+            case 6:
+              oldVal = _context6.sent;
+
+              if (!((typeof oldVal === 'undefined' ? 'undefined' : (0, _typeof3.default)(oldVal)) === 'object')) {
+                _context6.next = 9;
+                break;
+              }
+
+              return _context6.abrupt('return', this.cache(cacheKey, (0, _assign2.default)(oldVal, newVal)));
+
+            case 9:
+              return _context6.abrupt('return', this.cache(cacheKey, newVal));
+
+            case 10:
+              return _context6.abrupt('return', this.cache(cacheKey, newVal));
+
+            case 11:
+            case 'end':
+              return _context6.stop();
+          }
+        }
+      }, _callee6, this);
+    }));
+
+    return function manageToken(_x14, _x15, _x16, _x17) {
+      return _ref6.apply(this, arguments);
+    };
+  }();
+
   function getConf(opts) {
     var dfOpts = {
       name: 'token',
@@ -349,15 +401,18 @@ module.exports = function (app) {
   return {
     context: {
       token: token,
-      clearToken: clearToken
+      clearToken: clearToken,
+      manageToken: manageToken
     },
     controller: {
       token: token,
-      clearToken: clearToken
+      clearToken: clearToken,
+      manageToken: manageToken
     },
     service: {
       token: token,
-      clearToken: clearToken
+      clearToken: clearToken,
+      manageToken: manageToken
     }
   };
 };
