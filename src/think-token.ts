@@ -95,13 +95,12 @@ export default (app: Application) => {
     }
     const { key, checkField, secret, cachePrefix } = config
     const decoded: any = await vToken(tokenValue, secret)
-
     const keyVal = decoded[key]
     const checkVal = decoded[checkField]
     // 二次检验
     if (decoded && keyVal && checkVal) {
       const value = await think.cache(`${cachePrefix}-${keyVal}-${name}`)
-      return value[checkField] === checkVal ? value : null
+      return value ? value[checkField] === checkVal ? value : null : null
     } else {
       const uuid = decoded.uuid
       if (!uuid) {
