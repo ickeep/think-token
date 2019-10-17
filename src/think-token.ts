@@ -116,8 +116,8 @@ export default (app: Application) => {
     const { key, secret, cachePrefix, checkField } = config
     let uuid = ''
     let time = 0
-    const keyVal = value[key]
-    const checkVal = value[checkField]
+    const keyVal = value && value[key] || ''
+    const checkVal = value && value[checkField] || ''
     if (value && keyVal && checkVal) { // 二次校验直接更新 token
       // @ts-ignore
       const tokenObj = setToken.call(this, opts, value)
@@ -129,6 +129,10 @@ export default (app: Application) => {
       let tokenValue = getToken.call(this, opts)
       if (tokenValue) { // 不需要更新 token
         const decoded: any = await vToken(tokenValue, secret)
+        if (decoded && decoded[checkField] && decoded[key]) {
+          think.cache(`${cachePrefix}-${decoded[key]}-${name}`, value)
+          return ''
+        }
         uuid = decoded.uuid
         time = decoded.time
       }
