@@ -165,21 +165,14 @@ export default (app: Application) => {
   async function clearToken(name: string, id: string | number, opts: IConf) {
     const config = getConf(opts)
     const cachePrefix = config.cachePrefix
-    const cacheKey = `${cachePrefix}-${name}-${id}`
+    const cacheKey = `${cachePrefix}-${id}-${name}`
     return think.cache(cacheKey, null)
   }
 
   async function manageToken(name: string, id: string | number, newVal: any, opts: IConf) {
     const config = getConf(opts)
     const cachePrefix = config.cachePrefix
-    const cacheKey = `${cachePrefix}-${name}-${id}`
-    if (typeof newVal === 'object') {
-      const oldVal = await think.cache(cacheKey)
-      if (typeof oldVal === 'object') {
-        return think.cache(cacheKey, Object.assign(oldVal, newVal))
-      }
-      return think.cache(cacheKey, newVal)
-    }
+    const cacheKey = `${cachePrefix}-${id}-${name}`
     return think.cache(cacheKey, newVal)
   }
 
