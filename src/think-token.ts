@@ -1,5 +1,6 @@
 import { Application } from 'thinkjs'
 import JWT from 'jsonwebtoken'
+import crypto from 'crypto'
 
 export interface IConf {
   name?: string,
@@ -13,13 +14,57 @@ export interface IConf {
 export default (app: Application) => {
   const think: any = app.think
 
+  function genSign(opt: { [key: string]: any }, conf: IConf = {}) {
+    const config = getConf(conf)
+    if (!config.iv) {
+      return opt
+    }
+    const key = Buffer.from(config.secret, 'utf8')
+    const iv = Buffer.from(config.iv, 'utf8')
+    let str = ''
+    const cipher = crypto.createCipheriv('aes-128-cbc', key, iv)
+    try {
+      str += cipher.update(JSON.stringify(opt), 'utf8', 'hex')
+      str += cipher.final('hex')
+      return str
+    } catch (e) {
+      think.logger.error('think-token 加密失败')
+      think.logger.error(e)
+      return opt
+    }
+  }
+
+  function deSign(decoded: object | string, conf: IConf = {}) {
+    const config = getConf(conf)
+    if (!config.iv) {
+      return decoded
+    }
+    if (typeof decoded !== 'string') {
+      return decoded
+    }
+    const key = Buffer.from(config.secret, 'utf8')
+    const iv = Buffer.from(config.iv, 'utf8')
+    const cipher = crypto.createDecipheriv('aes-128-cbc', key, iv)
+    let str = ''
+    str += cipher.update(decoded, 'hex', 'utf8')
+    str += cipher.final('utf8')
+    try {
+      return JSON.parse(str)
+    } catch (e) {
+      think.logger.error('think-token 解密失败')
+      think.logger.error(e)
+      return {}
+    }
+  }
+
   function getConf(opts: IConf = {}) {
     const dfOpts = {
       name: 'authorization',
       key: 'id',
       checkField: 'password',
-      secret: 'fullBase',
+      secret: 'RJRFMeoFy8W8skHm',
       cachePrefix: 'fn-token-',
+      iv: 'Z8A1Ghd8DtAAz2it',
       setCookie: false
     }
     const dfConfig = think.config('token')
@@ -62,7 +107,8 @@ export default (app: Application) => {
       jwtOpt.uuid = app.think.uuid('v1')
     }
     const isSetCookie = config.setCookie
-    const sign = JWT.sign(jwtOpt, secret)
+
+    const sign = JWT.sign(genSign(jwtOpt), secret)
     if (isSetCookie) {
       // @ts-ignore
       this.setCookie(tokenName, sign)
@@ -80,7 +126,7 @@ export default (app: Application) => {
           if (err) {
             app.think.logger.error(`${err.name} - ${err.message}`)
           }
-          resolve(err || decoded)
+          resolve(err || deSign(decoded))
         }
       )
     })
