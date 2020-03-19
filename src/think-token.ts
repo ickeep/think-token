@@ -14,16 +14,30 @@ export interface IConf {
 export default (app: Application) => {
   const think: any = app.think
 
+  function getConf(opts: IConf = {}) {
+    const dfOpts = {
+      name: 'authorization',
+      key: 'id',
+      checkField: 'password',
+      secret: 'RJRFMeoFy8W8skHm',
+      cachePrefix: 'fn-token',
+      iv: 'Z8A1Ghd8DtAAz2it',
+      setCookie: false
+    }
+    const dfConfig = think.config('token')
+    return Object.assign(dfOpts, dfConfig, opts)
+  }
+
   function genSign(opt: { [key: string]: any }, conf: IConf = {}) {
     const config = getConf(conf)
     if (!config.iv) {
       return opt
     }
-    const key = Buffer.from(config.secret, 'utf8')
-    const iv = Buffer.from(config.iv, 'utf8')
-    let str = ''
-    const cipher = crypto.createCipheriv('aes-128-cbc', key, iv)
     try {
+      const key = Buffer.from(config.secret, 'utf8')
+      const iv = Buffer.from(config.iv, 'utf8')
+      let str = ''
+      const cipher = crypto.createCipheriv('aes-128-cbc', key, iv)
       str += cipher.update(JSON.stringify(opt), 'utf8', 'hex')
       str += cipher.final('hex')
       return str
@@ -42,33 +56,19 @@ export default (app: Application) => {
     if (typeof decoded !== 'string') {
       return decoded
     }
-    const key = Buffer.from(config.secret, 'utf8')
-    const iv = Buffer.from(config.iv, 'utf8')
-    const cipher = crypto.createDecipheriv('aes-128-cbc', key, iv)
-    let str = ''
-    str += cipher.update(decoded, 'hex', 'utf8')
-    str += cipher.final('utf8')
     try {
+      const key = Buffer.from(config.secret, 'utf8')
+      const iv = Buffer.from(config.iv, 'utf8')
+      const cipher = crypto.createDecipheriv('aes-128-cbc', key, iv)
+      let str = ''
+      str += cipher.update(decoded, 'hex', 'utf8')
+      str += cipher.final('utf8')
       return JSON.parse(str)
     } catch (e) {
       think.logger.error('think-token 解密失败')
       think.logger.error(e)
       return {}
     }
-  }
-
-  function getConf(opts: IConf = {}) {
-    const dfOpts = {
-      name: 'authorization',
-      key: 'id',
-      checkField: 'password',
-      secret: 'RJRFMeoFy8W8skHm',
-      cachePrefix: 'fn-token-',
-      iv: 'Z8A1Ghd8DtAAz2it',
-      setCookie: false
-    }
-    const dfConfig = think.config('token')
-    return Object.assign(dfOpts, dfConfig, opts)
   }
 
   function getToken(opts: IConf = {}) {
@@ -145,14 +145,14 @@ export default (app: Application) => {
     const checkVal = decoded[checkField]
     // 二次检验
     if (decoded && keyVal && checkVal) {
-      const value = await think.cache(`${cachePrefix}-${keyVal}-${name}`)
+      const value = await think.cache(`${cachePrefix}-${name}-${keyVal}`)
       return value ? value[checkField] === checkVal ? value : null : null
     } else {
       const uuid = decoded.uuid
       if (!uuid) {
         return null
       }
-      const cacheKey = `${cachePrefix}-${uuid}-${name}`
+      const cacheKey = `${cachePrefix}-${name}-${uuid}`
       return think.cache(cacheKey)
     }
   }
@@ -167,7 +167,7 @@ export default (app: Application) => {
     if (value && keyVal && checkVal) { // 二次校验直接更新 token
       // @ts-ignore
       const tokenObj = setToken.call(this, opts, value)
-      const cacheKey = `${cachePrefix}-${value[key]}-${name}`
+      const cacheKey = `${cachePrefix}-${name}-${value[key]}`
       think.cache(cacheKey, value)
       return { time: tokenObj.time, token: tokenObj.sign }
     } else {
@@ -176,7 +176,7 @@ export default (app: Application) => {
       if (tokenValue) { // 不需要更新 token
         const decoded: any = await vToken(tokenValue, secret)
         if (decoded && decoded[checkField] && decoded[key]) {
-          think.cache(`${cachePrefix}-${decoded[key]}-${name}`, value)
+          think.cache(`${cachePrefix}-${name}-${decoded[key]}`, value)
           return ''
         }
         uuid = decoded.uuid
@@ -192,7 +192,7 @@ export default (app: Application) => {
         tokenValue = tokenObj.sign
         time = tokenObj.time
       }
-      const tmpCacheKey = `${cachePrefix}-${uuid}-${name}`
+      const tmpCacheKey = `${cachePrefix}-${name}-${uuid}`
       think.cache(tmpCacheKey, value)
       return { token: tokenValue, uuid, time }
     }
@@ -215,14 +215,14 @@ export default (app: Application) => {
   async function clearToken(name: string, id: string | number, opts: IConf) {
     const config = getConf(opts)
     const cachePrefix = config.cachePrefix
-    const cacheKey = `${cachePrefix}-${id}-${name}`
+    const cacheKey = `${cachePrefix}-${name}-${id}`
     return think.cache(cacheKey, null)
   }
 
   async function manageToken(name: string, id: string | number, newVal: any, opts: IConf) {
     const config = getConf(opts)
     const cachePrefix = config.cachePrefix
-    const cacheKey = `${cachePrefix}-${id}-${name}`
+    const cacheKey = `${cachePrefix}-${name}-${id}`
     return think.cache(cacheKey, newVal)
   }
 
