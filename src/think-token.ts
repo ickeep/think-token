@@ -71,6 +71,11 @@ export default (app: Application) => {
     }
   }
 
+  function getHeaderToken(tokenName: string) {
+    // @ts-ignore
+    return (typeof this.header === 'function') ? this.header(tokenName) : (this.headers && this.headers[tokenName]) || ''
+  }
+
   function getToken(opts: IConf = {}) {
     const config = getConf(opts)
     const tokenName = config.name
@@ -78,10 +83,10 @@ export default (app: Application) => {
     let tokenValue = ''
     if (isSetCookie) {
       // @ts-ignore
-      tokenValue = this.cookie(tokenName) || this.header(tokenName)
+      tokenValue = this.cookie(tokenName) || this.getHeaderToken(tokenName)
     } else {
       // @ts-ignore
-      tokenValue = this.header(tokenName) || this.cookie(tokenName)
+      tokenValue = this.getHeaderToken(tokenName) || this.cookie(tokenName)
     }
     if (!tokenValue) {
       // app.think.logger.error(`${tokenName} 的值不能为空，请在 header or post or cookie 传值`)
@@ -114,7 +119,14 @@ export default (app: Application) => {
       this.setCookie(tokenName, sign)
     } else {
       // @ts-ignore
-      this.header(tokenName, sign)
+      if (typeof this.header === 'function') {
+        // @ts-ignore
+        this.header(tokenName, sign)
+        // @ts-ignore
+      } else if (this.headers) {
+        // @ts-ignore
+        this.headers[tokenName] = sign
+      }
     }
 
     return { sign, ...jwtOpt }
@@ -228,16 +240,19 @@ export default (app: Application) => {
 
   return {
     context: {
+      getHeaderToken,
       token,
       clearToken,
       manageToken
     },
     controller: {
+      getHeaderToken,
       token,
       clearToken,
       manageToken
     },
     service: {
+      getHeaderToken,
       token,
       clearToken,
       manageToken
